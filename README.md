@@ -1,5 +1,5 @@
 This plugin add new REST API command, which collect data about customer and orders for Freshdesk Connector Application 
-(https://www.freshworks.com/apps/freshdesk/shopware5/)
+(https://www.freshworks.com/apps/freshdesk/shopware_5_connector/)
 
 Installation guide:
 
