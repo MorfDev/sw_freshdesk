@@ -4,6 +4,7 @@ This plugin add new REST API command, which collect data about customer and orde
 Installation guide:
 
 1) Download the ZIP archive with the module from Github. 
+2) Unpack this archive to Shopware 5 folder.
 2) Go to your Shopware 5 admin panel > Configurations > Plugin Manager > Installed. 
-3) Click on "Upload plugin" button, select the ZIP archive. 
-4) After installation, open the "Freshdesk Connector" plugin (check tab "Inactive") and click "Activate".
+3) Find "Freshdesk Connector" in the "Uninstalled" tab
+4) Open the "Freshdesk Connector" plugin and click "Activate".
