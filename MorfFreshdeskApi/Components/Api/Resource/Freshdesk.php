@@ -12,6 +12,8 @@ use Shopware\Models\Customer\Group;
  */
 class Freshdesk extends Resource
 {
+    protected $totalSales = '';
+
     /**
      * @param string|null $email
      * @param string|null $orderId
@@ -32,8 +34,8 @@ class Freshdesk extends Resource
             return $data;
         }
 
-        $data['customer_list'] = $this->getCustomerData($customerId);
         $data['order_list'] = $this->getOrderData($customerId);
+        $data['customer_list'] = $this->getCustomerData($customerId);
 
         return $data;
     }
@@ -86,7 +88,6 @@ class Freshdesk extends Resource
             'shippingCountry',
             'shippingState',
             'paymentData',
-            'doneOrders',
         ]);
         $builder->from(CustomerModel::class, 'customer')
             ->leftJoin('customer.defaultBillingAddress', 'billing')
@@ -96,7 +97,6 @@ class Freshdesk extends Resource
             ->leftJoin('customer.defaultShippingAddress', 'shipping')
             ->leftJoin('shipping.country', 'shippingCountry')
             ->leftJoin('shipping.state', 'shippingState')
-            ->leftJoin('customer.orders', 'doneOrders', \Doctrine\ORM\Query\Expr\Join::WITH, 'doneOrders.status <> -1 AND doneOrders.status <> 4')
             ->leftJoin('customer.paymentData', 'paymentData', \Doctrine\ORM\Query\Expr\Join::WITH, 'paymentData.paymentMean = customer.paymentId')
             ->where('customer.id = :customerId')
             ->setParameter('customerId', $customerId);
@@ -122,7 +122,7 @@ class Freshdesk extends Resource
                 'email' => $customer['email'],
                 'group' => $customer['group']['name'],
                 'country' => $customer['defaultBillingAddress']['country']['name'],
-                'total_sales' => $this->getTotalSales($customer['orders']),
+                'total_sales' => $this->totalSales,
                 'created_at' => $customer['firstLogin']->format('Y-m-d'),
                 'billing_address' => $this->formatAddress($customer['defaultBillingAddress']),
                 'shipping_address' => $this->formatAddress($customer['defaultShippingAddress']),
@@ -136,9 +136,12 @@ class Freshdesk extends Resource
     {
         $total = [];
         if (!$orderList) {
-            return '0';
+            $this->totalSales = '0';
         }
         foreach ($orderList as $order) {
+            if ($order['status'] === -1 || $order['status'] === 4) {
+                continue;
+            }
             $key = $order['currency'];
             if (!array_key_exists($key, $total)) {
                 $total[$key] = 0;
@@ -149,7 +152,7 @@ class Freshdesk extends Resource
         foreach ($total as $key => $value) {
             $result[] = $value . ' ('.$key.')';
         }
-        return implode(', ', $result);
+        $this->totalSales = implode(', ', $result);
     }
 
     protected function getOrderData($customerId)
@@ -221,6 +224,7 @@ class Freshdesk extends Resource
     protected function prepareOrderData($data)
     {
         $result = [];
+        $this->getTotalSales($data);
         foreach ($data as $order) {
             $orderItemInfo = [];
 
