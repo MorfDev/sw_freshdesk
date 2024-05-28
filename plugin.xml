@@ -2,10 +2,10 @@
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.2/engine/Shopware/Components/Plugin/schema/plugin.xsd">
 
-    <label lang="de">Freshdesk Connector</label>
-    <label lang="en">Freshdesk Connector</label>
+    <label lang="de">Freshworks Connector</label>
+    <label lang="en">Freshworks Connector</label>
 
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <copyright>(c) by MorfDev</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
@@ -20,6 +20,10 @@
         <changes lang="de">bugfix</changes>
         <changes lang="en">bugfix</changes>
     </changelog>
-    <description lang="de">Freshdesk Connector</description>
-    <description lang="en">Freshdesk Connector</description>
+    <changelog version="1.0.2">
+        <changes lang="de">Contact info</changes>
+        <changes lang="en">Contact info</changes>
+    </changelog>
+    <description lang="de">Freshworks Connector</description>
+    <description lang="en">Freshworks Connector</description>
 </plugin>

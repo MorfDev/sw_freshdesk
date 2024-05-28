@@ -116,6 +116,21 @@ class Freshdesk extends Resource
         $result = [];
 
         foreach ($data as $customer) {
+        	$metaAddress = [
+				'firstname' => '',
+                'lastname' => '',
+                'phone' => '',
+                'additionalAddressLine1' => '',
+				'additionalAddressLine2' => '',
+                'city' => '',
+                'state' => ['name' => ''],
+                'zipcode' => '',
+			];
+
+        	if (isset($customer['defaultBillingAddress']) && $customer['defaultBillingAddress']) {
+				$metaAddress = $customer['defaultBillingAddress'];
+			}
+
             $result[] = [
                 'customer_number' => $customer['number'],
                 'name' => $customer['firstname'] . ' ' . $customer['lastname'],
@@ -126,6 +141,7 @@ class Freshdesk extends Resource
                 'created_at' => $customer['firstLogin']->format('Y-m-d'),
                 'billing_address' => $this->formatAddress($customer['defaultBillingAddress']),
                 'shipping_address' => $this->formatAddress($customer['defaultShippingAddress']),
+				'meta' => $metaAddress
             ];
         }
 
@@ -239,13 +255,77 @@ class Freshdesk extends Resource
                 ];
             }
 
+			$billing = [
+				'first_name' => '',
+				'last_name' => '',
+				'email' => '',
+				'country' => '',
+				'city' => '',
+				'state' => '',
+				'street' => '',
+				'postcode' => '',
+				'phone' => '',
+			];
+			$shipping = [
+				'first_name' => '',
+				'last_name' => '',
+				'country' => '',
+				'city' => '',
+				'state' => '',
+				'street' => '',
+				'postcode' => '',
+				'phone' => '',
+			];
+
+			if (isset($order['billing'])) {
+				$street = $order['billing']['street'];
+				if (isset($order['billing']['additionalAddressLine1'])) {
+					$street .= ' ' . $order['billing']['additionalAddressLine1'];
+				}
+				if (isset($order['billing']['additionalAddressLine2'])) {
+					$street .= ' ' . $order['billing']['additionalAddressLine2'];
+				}
+				$billing = [
+					'first_name' => $order['billing']['firstname'],
+					'last_name' => $order['billing']['lastname'],
+					'country' => $order['billing']['country']['name'],
+					'city' => $order['billing']['city'],
+					'state' => $order['billing']['state']['name'],
+					'street' => $street,
+					'postcode' => $order['billing']['state']['zipcode'],
+					'phone' => $order['billing']['state']['phone'],
+				];
+			}
+
+			if (isset($order['shipping'])) {
+				$street = $order['shipping']['street'];
+				if (isset($order['shipping']['additionalAddressLine1'])) {
+					$street .= ' ' . $order['shipping']['additionalAddressLine1'];
+				}
+				if (isset($order['shipping']['additionalAddressLine2'])) {
+					$street .= ' ' . $order['shipping']['additionalAddressLine2'];
+				}
+				$shipping = [
+					'first_name' => $order['shipping']['firstname'],
+					'last_name' => $order['shipping']['lastname'],
+					'country' => $order['shipping']['country']['name'],
+					'city' => $order['shipping']['city'],
+					'state' => $order['shipping']['state']['name'],
+					'street' => $street,
+					'postcode' => $order['shipping']['state']['zipcode'],
+					'phone' => $order['shipping']['state']['phone']
+				];
+			}
+
             $result[] = [
                 'order_id' => $order['id'],
                 'increment_id' => $order['number'],
                 'store' => $order['shop']['name'],
                 'created_at' => $order['orderTime']->format('Y-m-d H:i:s'),
                 'billing_address' => $this->formatAddress($order['billing']),
+				'billing' => $billing,
                 'shipping_address' => $this->formatAddress($order['shipping']),
+				'shipping' => $shipping,
                 'payment_method' => $order['payment']['description'],
                 'shipping_method' => $order['dispatch']['name'],
                 'currency' => $order['currency'],
@@ -278,7 +358,8 @@ class Freshdesk extends Resource
         $address['additionalAddressLine1'] && $result[] = $address['additionalAddressLine1'];
         $address['additionalAddressLine2'] && $result[] = $address['additionalAddressLine2'];
         $address['country'] && $address['country']['name'] && $result[] = $address['country']['name'];
-        $address['state'] && $address['state']['name'] && $result[] = $address['country']['name'];
+		$address['state'] && $address['state']['name'] && $result[] = $address['state']['name'];
+		$address['city'] && $result[] = $address['city'];
         $address['zipcode'] && $result[] = $address['zipcode'];
         $address['phone'] && $result[] = $address['phone'];
 

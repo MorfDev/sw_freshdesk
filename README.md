@@ -6,12 +6,12 @@ Installation guide:
 1) Download the ZIP archive with the module from Github. 
 2) Unpack this archive to "custom/plugins" of Shopware 5 folder.
 3) Go to your Shopware 5 admin panel > Configurations > Plugin Manager > Installed. 
-4) Find "Freshdesk Connector" in the "Uninstalled" tab
-5) Open the "Freshdesk Connector" plugin and click "Activate".
+4) Find "Freshworks Connector" in the "Uninstalled" tab
+5) Open the "Freshworks Connector" plugin and click "Activate".
 
 OR
 
 1) Download the ZIP archive with the module from Github. 
 2) Go to your Shopware 5 admin panel > Configurations > Plugin Manager > Installed. 
 3) Click on "Upload plugin" and select ZIP archive with the module
-4) Open the "Freshdesk Connector" plugin and click "Activate".
+4) Open the "Freshworks Connector" plugin and click "Activate".
